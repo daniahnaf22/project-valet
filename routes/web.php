@@ -7,9 +7,12 @@ use App\Models\Category;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\DosenController;
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\JurusanController;
+use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MahasiswaController;
 
 /*
@@ -63,6 +66,20 @@ Route::get('/posts/author/{user:username}', function (User $user){
         'posts' => $user->posts->load(['author' , 'category'])
     ]);
 });
+
+Route::get('/login', [LoginController::class, 'index'])->middleware('login')->name('guest');
+Route::post('/login', [LoginController::class, 'authenticate'])->middleware('guest');
+Route::post('/logout', [LoginController::class, 'logout']);
+
+Route::post('/register', [RegisterController::class, 'store'])->middleware('guest');
+Route::get('/register', [RegisterController::class, 'index'])->middleware('guest');
+
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth');
+
+
+
+
+
 
 //Barang
 Route::get('/barang', [BarangController::class, 'index']);
