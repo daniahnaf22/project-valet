@@ -7,13 +7,13 @@ use App\Models\Category;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\DosenController;
-use App\Http\Controllers\LoginController;
 use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\JurusanController;
-use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MahasiswaController;
+use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\DashboardPostController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +42,26 @@ Route::get('/about', function () {
     ]);
 });
 
+// Auth
+Route::get('/login', [LoginController::class, 'index'])->middleware('guest')->name('login');
+Route::post('/login', [LoginController::class, 'authenticate'])->middleware('guest');
+
+Route::post('/logout', [LoginController::class, 'logout']);
+
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth');
+
+Route::get('/register', [RegisterController::class, 'index'])->middleware('guest');
+Route::post('/register', [RegisterController::class, 'store'])->middleware('guest');
+
+Route::get('/dashboard', function(){
+    return view ('dashboard.index',['title' => "Dashboard"]);
+})->middleware('auth');
+
+Route::get('/dashboard/posts/checkSlug', [DashboardPostController::class, 'checkSlug'])->middleware('auth');
+Route::resource('/dashboard/posts' , DashboardPostController::class)->middleware('auth');
+
+
+
 Route::get('/posts', [PostController::class, 'index']);
 Route::get('/posts/single-post/{post:slug}', [PostController::class, 'single']);
 Route::get('/posts/categories', function (){
@@ -67,20 +87,6 @@ Route::get('/posts/author/{user:username}', function (User $user){
     ]);
 });
 
-Route::get('/login', [LoginController::class, 'index'])->middleware('login')->name('guest');
-Route::post('/login', [LoginController::class, 'authenticate'])->middleware('guest');
-Route::post('/logout', [LoginController::class, 'logout']);
-
-Route::post('/register', [RegisterController::class, 'store'])->middleware('guest');
-Route::get('/register', [RegisterController::class, 'index'])->middleware('guest');
-
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth');
-
-
-
-
-
-
 //Barang
 Route::get('/barang', [BarangController::class, 'index']);
 Route::get('/barang/single-barang/{barang:no_resi}', [BarangController::class,'single']);
@@ -90,9 +96,12 @@ Route::get('/nilai', [NilaiController::class, 'indexNilai']);
 Route::get('/nilai/single-nilai/{no_bp}', [NilaiController::class, 'singleNilai']);
 
 
-//Mahasiswa
+// mahasiswa
 Route::get('/mahasiswa', [MahasiswaController::class, 'index']);
-Route::get('/mahasiswa/single-mhs/{mhs:no_bp}', [MahasiswaController::class, 'single']);
+Route::get('/mahasiswa/single-mhs/{mhs:no_bp}', [MahasiswaController::class, 'single'])->middleware('auth');
+
+Route::get('/mahasiswa/jurusan/{jurusan:slug}', [JurusanController::class, 'jurusan_mhs'])->middleware('auth');
+Route::get('/mahasiswa/jurusans', [JurusanController::class, 'index_mhs'])->middleware('auth');
 
 //Dosen
 Route::get('/dosen', [DosenController::class, 'index']);
@@ -100,5 +109,6 @@ Route::get('/dosen/single-dosen/{dosen:nidn}', [DosenController::class, 'single'
 
 Route::get('/dosen/jurusan/{jurusan:slug}', [JurusanController::class, 'jurusan_dsn']);
 Route::get('/dosen/jurusans', [JurusanController::class, 'index_dsn']);
+
 
 

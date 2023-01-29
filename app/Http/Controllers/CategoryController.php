@@ -18,7 +18,7 @@ use App\Models\Category;
             return view('posts.category', [
                 'title' => "Post By : Category $category->name",
                 'active' => 'category',
-                'posts' => $category->posts
+                'posts' => $category->posts->load(['author', 'category'])
             ]);
         }
     }

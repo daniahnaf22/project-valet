@@ -1,1 +1,5 @@
-<h1>Dashbbbbb</h1>
+@extends('dashboard.layouts.main')
+
+@section('admin')
+    Halaman Admin Blog
+@endsection

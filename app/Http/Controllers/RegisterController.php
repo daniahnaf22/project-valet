@@ -2,20 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 class RegisterController extends Controller
 {
-    //
-    public function index()
-    {
-        return view('register.index' , ['title' => 'Register', 'active' => 'register']);
+    public function index() {
+        return view('register.index', [
+         'title' => 'register',
+         'active' => 'register'
+        ]);
     }
 
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
+        
         $validateData = $request->validate([
             //Role
             'name' => 'required|min:2|max:200',
@@ -23,17 +25,17 @@ class RegisterController extends Controller
             'email' => 'required|email:dns|unique:users',
             'password' => 'required|min:6|max:200'
         ]);
-        //$validateData['password'] = bcrypt($validateData['password']);
 
+        // $validateData['password'] = bcrypt($validateData['password']);
         $validateData['password'] = Hash::make($validateData['password']);
-
-
-        //dd($request);
+        
+        // dd($request);
         //return request()->all();
         User::create($validateData);
 
-        $request->session()->flash('success', 'Register Successfully, Silahkan Login');
+        $request->session()->flash('success', 'Registrasi berhasil, silahkan login!');
 
         return redirect('/login');
+
     }
 }
