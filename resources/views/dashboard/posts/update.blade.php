@@ -2,7 +2,8 @@
 @section('admin')
     <div class="row">
         <div class="col-lg-8">
-            <form action="/dashboard/posts/{{ $post->slug }}" class="post-validation" method="POST" novalidate>
+            <form action="/dashboard/posts/{{ $post->slug }}" class="post-validation" method="POST"
+                enctype="multipart/form-data" novalidate>
                 @method('put')
                 @csrf
                 <div class="mb-3">
@@ -29,8 +30,8 @@
                         <span class="input-group-text">
                             <span data-feather="align-right"></span>
                         </span>
-                        <input required type="text" value="{{ old('slug', $post->slug) }}" class="form-control @error('slug') is-invalid @enderror"
-                            name="slug" id="slug">
+                        <input required type="text" value="{{ old('slug', $post->slug) }}"
+                            class="form-control @error('slug') is-invalid @enderror" name="slug" id="slug">
                         <div class="invalid-feedback">
                             @if ($errors->has('slug'))
                                 {{ $errors->first('slug') }}
@@ -42,9 +43,30 @@
                 </div>
 
                 <div class="mb-3">
+                    <label for="image" class="form-label">Upload Image</label>
+                    <input type="hidden" name="oldImage" value="{{ $post->image }}">
+                    @if ($post->image)
+                        <img src="{{ asset('storage/' . $post->image) }}"
+                            class="img-preview img-fluid mb-3 col-sm-5 d-block">
+                    @else
+                        <img class="img-preview img-fluid mb-3 col-sm-5">
+                    @endif
+                    
+                    <input class="form-control @error('image') is-invalid @enderror" type="file" id="image"
+                        name="image" onchange="previewImage()">
+                    <div class="invalid-feedback">
+                        @if ($errors->has('slug'))
+                            {{ $errors->first('slug') }}
+                        @else
+                            Silahkan di isi Body
+                        @endif
+                    </div>
+                </div>
+
+                <div class="mb-3">
                     <label for="" class="form-label">Body</label>
-                    <input required type="text" value="{{ old('body', $post->body )}}" class="form-control d-none @error('body') is-invalid @enderror"
-                        id="body" name="body">
+                    <input required type="text" value="{{ old('body', $post->body) }}"
+                        class="form-control d-none @error('body') is-invalid @enderror" id="body" name="body">
                     <trix-editor input="body"></trix-editor>
                     <div class="invalid-feedback">
                         @if ($errors->has('slug'))
@@ -60,7 +82,8 @@
                     <div class="input-group">
                         <select class="form-select form-select-lg" name="category_id" id="category_id">
                             @foreach ($categories as $item)
-                                <option {{ old('category_id', $post->category_id) == $item->id ? 'selected' : '' }} value="{{ $item->id }}">
+                                <option {{ old('category_id', $post->category_id) == $item->id ? 'selected' : '' }}
+                                    value="{{ $item->id }}">
                                     {{ $item->name }}</option>
                             @endforeach
                         </select>
@@ -104,5 +127,19 @@
         document.addEventListener('trix-file-accept', function(e) {
             e.preventDefault();
         });
+
+        function previewImage() {
+            const image = document.querySelector('#image');
+            const imgPreview = document.querySelector('.img-preview');
+
+            imgPreview.style.display = 'block';
+
+            const ofReader = new FileReader();
+            ofReader.readAsDataURL(image.files[0]);
+
+            ofReader.onload = function(ofREvent) {
+                imgPreview.src = ofREvent.target.result;
+            }
+        }
     </script>
 @endsection

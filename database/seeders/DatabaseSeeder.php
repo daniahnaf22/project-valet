@@ -21,7 +21,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        User::factory(4)->create();
+        User::factory(3)->create();
+        Post::factory(100)->create();
+        
+        Mahasiswa::factory(10)->create();
+        Dosen::factory(10)->create();
+
+        User::create([
+            'name' => 'Dani Ahnaf Falih',
+            'username' => 'daniahnaf22',
+            'email' => 'ahnaffalihdani@gmail.com',
+            'password' => bcrypt('123456')
+        ]);
         
         Category::create([
             'name' => 'Project Web',
@@ -32,7 +43,6 @@ class DatabaseSeeder extends Seeder
             'slug' => 'basis-data'
        ]);
         
-        Post::factory(10)->create();
 
         Jurusan::create([
             'name' => 'Teknologi Informasi',
@@ -43,8 +53,6 @@ class DatabaseSeeder extends Seeder
             'slug' => 'teknik-sipil'
         ]);
 
-        Mahasiswa::factory(5)->create();
-        Dosen::factory(5)->create();
 
        /* User::create([
             'name' => 'Danny Utama',

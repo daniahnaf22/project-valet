@@ -20,12 +20,20 @@
                     <span data-feather="x-circle"></span> Delete
                 </button>
             </form>
-          
-            <div class="mt-3">   
-                <img class="card-img-top " src="https://source.unsplash.com/1200x400?{{ $single_post->category->name }}"
-                alt="Title">
-            </div>
-            
+
+            @if ($single_post->image)
+                <div style="max-height: 350px; overflow:hidden">
+                    <img class="img-fluid mt-2" src="{{ asset('storage/' . $single_post->image) }}"
+                        alt="{{ $single_post->category->name }}">
+                </div>
+            @else
+                <div class="mt-3">
+                    <img class="img-fluid mt-2"
+                        src="https://source.unsplash.com/1200x400?{{ $single_post->category->name }}"
+                        alt="{{ $single_post->category->name }}">
+                </div>
+            @endif
+
             <article class="my-3 fs-5">
                 {!! $single_post->body !!}
             </article>

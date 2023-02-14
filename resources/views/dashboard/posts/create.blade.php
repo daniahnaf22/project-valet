@@ -2,7 +2,7 @@
 @section('admin')
     <div class="row">
         <div class="col-lg-8">
-            <form action="/dashboard/posts" class="post-validation" method="POST" novalidate>
+            <form action="/dashboard/posts" class="post-validation" method="POST" enctype="multipart/form-data" novalidate>
                 @csrf
                 <div class="mb-3">
                     <label for="title" class="form-label">Title</label>
@@ -39,6 +39,21 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="mb-3">
+                    <label for="image" class="form-label">Upload Image</label>
+                    <img class="img-preview img-fluid mb-3 col-sm-5">
+                    <input class="form-control @error('image') is-invalid @enderror" type="file" id="image"
+                        name="image" onchange="previewImage()">
+                        <div class="invalid-feedback">
+                            @if ($errors->has('image'))
+                                {{ $errors->first('image') }}
+                            @else
+                                Silahkan di isi Slug
+                            @endif
+                        </div>
+                </div>
+
 
                 <div class="mb-3">
                     <label for="" class="form-label">Body</label>
@@ -103,5 +118,20 @@
         document.addEventListener('trix-file-accept', function(e) {
             e.preventDefault();
         });
+
+        function previewImage() 
+        {
+            const image = document.querySelector('#image');
+            const imgPreview = document.querySelector('.img-preview');
+
+            imgPreview.style.display = 'block';
+
+            const ofReader = new FileReader();
+            ofReader.readAsDataURL(image.files[0]);
+
+            ofReader.onload = function(ofREvent) {
+                imgPreview.src = ofREvent.target.result;
+            }
+        }
     </script>
 @endsection

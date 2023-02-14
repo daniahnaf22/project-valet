@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminCategoryController;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\Jurusan;
@@ -54,36 +55,28 @@ Route::get('/register', [RegisterController::class, 'index'])->middleware('guest
 Route::post('/register', [RegisterController::class, 'store'])->middleware('guest');
 
 Route::get('/dashboard', function(){
-    return view ('dashboard.index',['title' => "Dashboard"]);
+    return view ('dashboard.index',[
+        'title' => "Dashboard" . auth()->user()->name]);
 })->middleware('auth');
 
 Route::get('/dashboard/posts/checkSlug', [DashboardPostController::class, 'checkSlug'])->middleware('auth');
 Route::resource('/dashboard/posts' , DashboardPostController::class)->middleware('auth');
+Route::resource('/dashboard/categories' , AdminCategoryController::class)->except('show')->middleware('admin');
 
 
 
 Route::get('/posts', [PostController::class, 'index']);
 Route::get('/posts/single-post/{post:slug}', [PostController::class, 'single']);
-Route::get('/posts/categories', function (){
-    return view('posts.categories', [
-        'title' => 'Category',
-        'active' => 'category',
-        'categories' => Category::all()
-    ]);
-});
-Route::get('/posts/category/{category:slug}', function(Category $category){
-    return view('posts.category', [
-        'title' => "Post By : Category $category->name",
-        'active' => 'posts',
-        'posts' => $category->posts->load(['author'.'category'])
-    ]);
-});
 
-Route::get('/posts/author/{user:username}', function (User $user){
-    return view('posts.category',[
-        'title' => "Post By : Author $user->name",
+Route::get('/posts/category/{category:slug}', [CategoryController::class, 'category']);
+Route::get('/posts/categories', [CategoryController::class, 'index']);
+
+Route::get('/posts/author/{user:username}', function(User $user){
+    return view('posts.category', [
+        'title' => "Post By Author $user->name",
         'active' => 'posts',
-        'posts' => $user->posts->load(['author' , 'category'])
+        'posts' => $user->posts->load(['author','category'])
+
     ]);
 });
 
